@@ -1,0 +1,46 @@
+---
+- hosts: all
+  user: vagrant
+  sudo: true
+
+  tasks:
+  - name: Install EPEL
+    command: creates=/etc/yum.repos.d/epel.repo rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+
+  - name: Install required packages
+    action: yum pkg={{ item }} state=installed
+    with_items:
+      # - htop                        # Interactive process viewer
+      # - atool                       # A perl script for managing file archives of various types
+      # - rubygems                    # What is Ruby for?
+      - python-virtualenv
+      - python-setuptools             # Easily build and distribute Python packages
+      - git
+      - python-devel
+      # - ruby-devel                  # What is Ruby for?
+      # - postgresql92-libs           # This package does not exist
+      # - postgresql92-devel          # This package does not exist
+      - libxml2-devel                 # Libraries, includes, etc. to develop XML and HTML applications
+      - libxslt-devel                 # Development files for libxslt
+      # - postgresql92                # This package does not exist
+      # - rpmdevtools                 # What is Ruby for?
+      - gcc
+      - gcc-c++
+      - make
+      - bison                         # A GNU general-purpose parser generator
+      - httpd                         # Apache HTTP Serverq
+      # - createrepo                  # Used for the creation of RPMs
+      - mod_wsgi                      # A WSGI interface for Python web applications in Apache
+      - java-1.7.0-openjdk-headless   # java-openjdk: This package does not exist
+      - tomcat                        # tomcat6 : this package does not exist
+      - tomcat-webapps                # The ROOT and examples web applications for Apache Tomcat
+      - tomcat-admin-webapps          # The host-manager and manager web applications for Apache Tomcat
+      # - cronie                      # Cron daemon for executing programs at set times
+      - libselinux-python             # SELinux python bindings for libselinux
+      - wget
+      - vim
+      - python-psycopg2               # A PostgreSQL database adapter for Python
+
+  # Solr 
+  - name: Start Tomcat
+    service: name=tomcat state=started
