@@ -14,3 +14,7 @@ vagrant plugin install vagrant-vbguest
 # Manages /etc/hosts 
 vagrant plugin install vagrant-hostmanager
 ```
+
+## Ansible
+
+You will need a working installation of Ansible. Refer to the [installation page](http://docs.ansible.com/intro_installation.html) (more info here, temporary instructions).
