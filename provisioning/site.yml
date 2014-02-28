@@ -1,3 +1,4 @@
+# Reference file: https://github.com/okfn/ckanext-geodatagov/blob/master/deployment/datagov-devserver.yml
 ---
 - hosts: all
   user: vagrant
@@ -13,34 +14,43 @@
       # - htop                        # Interactive process viewer
       # - atool                       # A perl script for managing file archives of various types
       # - rubygems                    # What is Ruby for?
-      - python-virtualenv
-      - python-setuptools             # Easily build and distribute Python packages
-      - git
-      - python-devel
       # - ruby-devel                  # What is Ruby for?
       # - postgresql92-libs           # This package does not exist
       # - postgresql92-devel          # This package does not exist
-      - libxml2-devel                 # Libraries, includes, etc. to develop XML and HTML applications
-      - libxslt-devel                 # Development files for libxslt
       # - postgresql92                # This package does not exist
       # - rpmdevtools                 # What is Ruby for?
-      - gcc
-      - gcc-c++
-      - make
-      - bison                         # A GNU general-purpose parser generator
-      - httpd                         # Apache HTTP Serverq
       # - createrepo                  # Used for the creation of RPMs
-      - mod_wsgi                      # A WSGI interface for Python web applications in Apache
-      - java-1.7.0-openjdk-headless   # java-openjdk: This package does not exist
-      - tomcat                        # tomcat6 : this package does not exist
-      - tomcat-webapps                # The ROOT and examples web applications for Apache Tomcat
-      - tomcat-admin-webapps          # The host-manager and manager web applications for Apache Tomcat
       # - cronie                      # Cron daemon for executing programs at set times
-      - libselinux-python             # SELinux python bindings for libselinux
-      - wget
-      - vim
-      - python-psycopg2               # A PostgreSQL database adapter for Python
 
-  # Solr 
+      - bison                         # A GNU general-purpose parser generator
+      - gcc                           # Various compilers (C, C++, Objective-C, Java, ...)
+      - gcc-c++                       # C++ support for GCC
+      - git                           # Fast Version Control System
+      - httpd                         # Apache HTTP Serverq
+      - java-1.6.0-openjdk            # OpenJDK Runtime Environment
+      - libselinux-python             # SELinux python bindings for libselinux
+      - libxml2-devel                 # Libraries, includes, etc. to develop XML and HTML applications
+      - libxslt-devel                 # Development files for libxslt
+      - make                          # A GNU tool which simplifies the build process for users
+      - mod_wsgi                      # A WSGI interface for Python web applications in Apache
+      - python-devel                  # The libraries and header files needed for Python development
+      - python-psycopg2               # A PostgreSQL database adapter for Python
+      - python-setuptools             # Easily build and distribute Python packages
+      - python-virtualenv             # Tool to create isolated Python environments
+      - tomcat6                       # Apache Servlet/JSP Engine, RI for Servlet 3.0/JSP 2.2 API
+      - tomcat6-webapps               # The ROOT and examples web applications for Apache Tomcat
+      - tomcat6-admin-webapps         # The host-manager and manager web applications for Apache Tomcat
+      - vim
+      - wget                          # A utility for retrieving files using the HTTP or FTP protocols
+
+  # Solr
+
+  # Why is Tomcat started here?
   - name: Start Tomcat
-    service: name=tomcat state=started
+    service: name=tomcat6 state=started
+
+  - name: Download Apache Solr 4.7.0
+    get_url: url="http://www.gtlib.gatech.edu/pub/apache/lucene/solr/4.7.0/solr-4.7.0.tgz" dest="~/"
+
+  - name: Unpack solr
+    shell: "cd ~/ && tar -zxvf solr-4.2.1.tgz && cd solr-4.2.1/dist && cp solr-4.2.1.war /var/lib/tomcat6/webapps/solr.war"
