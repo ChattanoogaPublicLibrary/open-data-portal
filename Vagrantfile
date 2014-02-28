@@ -3,8 +3,8 @@
 
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "precise64"
-  config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box"
+  config.vm.box = "centos64"
+  config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-nocm.box"
   
   config.vm.network :forwarded_port, guest: 80, host: 8080
   config.vm.network :forwarded_port, guest: 5000, host: 5000
@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--memory", "2048"]
     vb.customize ["modifyvm", :id, "--cpus", "2"]
   end
-
+ 
   config.vm.define "ckan-dev" do |node|
     node.vm.hostname = "opendata.chattlibrary.dev"
     node.hostmanager.aliases = %w(opendata.chattlibrary.localdomain opendata)
@@ -31,7 +31,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "provisioning/site.yml"
     ansible.inventory_path = "provisioning/stage"
-    ansible.verbose = "vv"
+    ansible.verbose = "v"
+    ansible.host_key_checking = false
   end
 
 end
