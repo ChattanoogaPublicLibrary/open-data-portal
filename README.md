@@ -5,7 +5,7 @@ Welcome to the Chattanooga Public Library's Open Data Portal initiative!
 
 ## Instructions for Local Development
 
-To replicate the CPL's official development environment you will require a number of open source tools, specifically: 
+To replicate the CPL's official development environment a number of open source tools are required, specifically: 
 
 * [Oracle VirtualBox](https://www.virtualbox.org/)
 * [Vagrant](http://www.vagrantup.com/)
@@ -30,6 +30,16 @@ sudo yum install -y virtualbox
 ### Vagrant
 
 Please visit the [downloads page](http://www.vagrantup.com/downloads.html) to find an appropriate binary for your operating system.
+
+Once `vagrant` is installed you will need to install two plugins: `vagrant-vbguest` which updates your Vagrant box's installed guest additions to reflect the version of VirtualBox you are running and `vagrant-hostmaster` which manages your `/etc/hosts` file.  Run the following commands from a terminal:
+
+```bash
+# Updates the VirtualBox Guest Editions version to match your VirtualBox version
+vagrant plugin install vagrant-vbguest
+
+# Manages /etc/hosts 
+vagrant plugin install vagrant-hostmanager
+```
 
 ### Ansible
 
