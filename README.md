@@ -17,28 +17,22 @@ Furthermore this guide assumes you are developing on a *nix-based machine, as Wi
 
 VirtualBox is relatively straight forward to install. Please visit the [download page](https://www.virtualbox.org/wiki/Downloads) for installation instructions specific to your operating system.
 
-For Ubuntu:
+Ubuntu:
 ```bash
 sudo apt-get install -y virtualbox
 ```
 
-For Fedora:
+Fedora:
 ```bash
 sudo yum install -y virtualbox
 ```
 
 ### Vagrant
 
-To use this Vagrantfile you need to install two plugins. Run the following commands in any directory:
-
-```bash
-# Updates the VirtualBox Guest Editions version to match your VirtualBox version
-vagrant plugin install vagrant-vbguest
-
-# Manages /etc/hosts 
-vagrant plugin install vagrant-hostmanager
-```
+Please visit the [downloads page](http://www.vagrantup.com/downloads.html) to find an appropriate binary for your operating system.
 
 ### Ansible
 
-You will need a working installation of Ansible. Refer to the [installation page](http://docs.ansible.com/intro_installation.html) (more info here, temporary instructions).
+Please visit the [installation page](http://docs.ansible.com/intro_installation.html#running-from-source) to find the most appropriate route for you to install Ansible. At the time of this writing Ansible 1.5 (most recent version) has not been released to the `yum` repositories so I installed from source. The rationale stemmed from needing a solution introduced in Ansible 1.5 regarding the `git` module.
+
+### Clone the Open Data Portal Repository
