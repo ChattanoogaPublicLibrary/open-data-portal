@@ -1,56 +1,75 @@
-# Reference file: https://github.com/okfn/ckanext-geodatagov/blob/master/deployment/datagov-devserver.yml
 ---
 - hosts: all
   user: vagrant
   sudo: true
 
   tasks:
-  - name: Install EPEL
-    command: creates=/etc/yum.repos.d/epel.repo rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
 
-  - name: Install required packages
-    action: yum pkg={{ item }} state=installed
+  - name: General | Copy SSH Keypair
+    copy: src=/home/sean/.ssh/{{ item }} dest=/home/vagrant/.ssh/{{ item  }} owner=vagrant
     with_items:
-      # - htop                        # Interactive process viewer
-      # - atool                       # A perl script for managing file archives of various types
-      # - rubygems                    # What is Ruby for?
-      # - ruby-devel                  # What is Ruby for?
-      # - postgresql92-libs           # This package does not exist
-      # - postgresql92-devel          # This package does not exist
-      # - postgresql92                # This package does not exist
-      # - rpmdevtools                 # What is Ruby for?
-      # - createrepo                  # Used for the creation of RPMs
-      # - cronie                      # Cron daemon for executing programs at set times
+    - id_rsa_vagrant
+    - id_rsa_vagrant.pub
 
-      - bison                         # A GNU general-purpose parser generator
-      - gcc                           # Various compilers (C, C++, Objective-C, Java, ...)
-      - gcc-c++                       # C++ support for GCC
-      - git                           # Fast Version Control System
-      - httpd                         # Apache HTTP Serverq
-      - java-1.6.0-openjdk            # OpenJDK Runtime Environment
-      - libselinux-python             # SELinux python bindings for libselinux
-      - libxml2-devel                 # Libraries, includes, etc. to develop XML and HTML applications
-      - libxslt-devel                 # Development files for libxslt
-      - make                          # A GNU tool which simplifies the build process for users
-      - mod_wsgi                      # A WSGI interface for Python web applications in Apache
-      - python-devel                  # The libraries and header files needed for Python development
-      - python-psycopg2               # A PostgreSQL database adapter for Python
-      - python-setuptools             # Easily build and distribute Python packages
-      - python-virtualenv             # Tool to create isolated Python environments
-      - tomcat6                       # Apache Servlet/JSP Engine, RI for Servlet 3.0/JSP 2.2 API
-      - tomcat6-webapps               # The ROOT and examples web applications for Apache Tomcat
-      - tomcat6-admin-webapps         # The host-manager and manager web applications for Apache Tomcat
-      - vim
-      - wget                          # A utility for retrieving files using the HTTP or FTP protocols
+  - name: General | Install Required Packages
+    apt: pkg={{ item }} state=present update_cache=yes
+    with_items:
+    - git-core
+    - libpq-dev
+    - openjdk-6-jdk
+    - postgresql
+    - python-dev
+    - python-pip
+    - python-psycopg2
+    - python-virtualenv
+    - solr-jetty
 
-  # Solr
+  - name: CKAN | Install CKAN source to virtualenv
+    pip: name='git+https://github.com/ckan/ckan.git@ckan-2.2#egg=ckan' virtualenv=/usr/lib/ckan/default virtualenv_command=/usr/lib/ckan/default/bin/activate virtualenv_site_packages=no
 
-  # Why is Tomcat started here?
-  - name: Start Tomcat
-    service: name=tomcat6 state=started
+  - name: CKAN | Install Python Requiements
+    pip: requirements=/usr/lib/ckan/default/src/ckan/requirements.txt virtualenv=/usr/lib/ckan/default virtualenv_command=/usr/lib/ckan/default/bin/activate virtualenv_site_packages=no
 
-  - name: Download Apache Solr 4.7.0
-    get_url: url="http://www.gtlib.gatech.edu/pub/apache/lucene/solr/4.7.0/solr-4.7.0.tgz" dest="~/"
+  - name: PostgreSQL | Start DB Cluster
+    command: /etc/init.d/postgresql start
 
-  - name: Unpack solr
-    shell: "cd ~/ && tar -zxvf solr-4.2.1.tgz && cd solr-4.2.1/dist && cp solr-4.2.1.war /var/lib/tomcat6/webapps/solr.war"
+  - name: CKAN | Create DB
+    sudo_user: postgres
+    postgresql_db: name=ckan_default
+                   encoding='UTF-8'
+                   lc_collate='en_US.UTF-8'
+                   lc_ctype='en_US.UTF-8'
+                   template='template0'
+                   login_password=pass
+
+  - name: CKAN | Create Database User
+    sudo_user: postgres
+    postgresql_user: db=ckan_default user=ckan_default password=pass
+
+  - name: CKAN | Create site directory
+    file: path=/etc/ckan/default state=directory owner=vagrant
+
+  - name: CKAN | Copy development.ini to remote host
+    copy: src=/home/sean/projects/github/open-data-portal/provisioning/roles/common/files/development.ini dest=/etc/ckan/default/development.ini
+
+  # - name: CKAN | Create CKAN config file
+  #   command: chdir=/etc/ckan/default /usr/lib/ckan/default/bin/paster make-config /etc/ckan/default/development.ini
+
+  - name: CKAN | Copy Jetty configuration to remote host
+    copy: src=/home/sean/projects/github/open-data-portal/provisioning/roles/common/files/jetty dest=/etc/default/jetty
+
+  - name: CKAN | Start Jetty Server
+    service: name=jetty state=started
+
+  - name: CKAN | Backup Solr schema
+    command: mv /etc/solr/conf/schema.xml /etc/solr/conf/schema.xml.bak
+
+  - name: CKAN | Replace Solr schema.xml with symlink to CKAN schema file
+    file: src=/usr/lib/ckan/default/src/ckan/ckan/config/solr/schema.xml dest=/etc/solr/conf/schema.xml
+
+  - name: CKAN | Restart Jetty Server
+    service: name=jetty state=restarted
+
+  - name: CKAN | Initialize CKAN database
+    sudo_user: postgres
+    command: chdir=/etc/ckan/default /usr/lib/ckan/default/bin/paster --plugin=ckan db init
