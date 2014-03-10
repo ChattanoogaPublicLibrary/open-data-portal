@@ -14,6 +14,7 @@
   - name: General | Install Required Packages
     apt: pkg={{ item }} state=present update_cache=yes
     with_items:
+    - apache2
     - git-core
     - libpq-dev
     - openjdk-6-jdk
@@ -25,10 +26,10 @@
     - solr-jetty
 
   - name: CKAN | Install CKAN source to virtualenv
-    pip: name='git+https://github.com/ckan/ckan.git@ckan-2.2#egg=ckan' virtualenv=/usr/lib/ckan/default virtualenv_command=/usr/lib/ckan/default/bin/activate virtualenv_site_packages=no
+    pip: name='git+https://github.com/ckan/ckan.git@ckan-2.2#egg=ckan' virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
 
   - name: CKAN | Install Python Requiements
-    pip: requirements=/usr/lib/ckan/default/src/ckan/requirements.txt virtualenv=/usr/lib/ckan/default virtualenv_command=/usr/lib/ckan/default/bin/activate virtualenv_site_packages=no
+    pip: requirements=/usr/lib/ckan/default/src/ckan/requirements.txt virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
 
   - name: PostgreSQL | Start DB Cluster
     command: /etc/init.d/postgresql start
@@ -49,11 +50,8 @@
   - name: CKAN | Create site directory
     file: path=/etc/ckan/default state=directory owner=vagrant
 
-  - name: CKAN | Copy development.ini to remote host
-    copy: src=/home/sean/projects/github/open-data-portal/provisioning/roles/common/files/development.ini dest=/etc/ckan/default/development.ini
-
-  # - name: CKAN | Create CKAN config file
-  #   command: chdir=/etc/ckan/default /usr/lib/ckan/default/bin/paster make-config /etc/ckan/default/development.ini
+  - name: CKAN | Create CKAN config file
+    command: /usr/lib/ckan/default/bin/paster make-config ckan /etc/ckan/default/development.ini
 
   - name: CKAN | Copy Jetty configuration to remote host
     copy: src=/home/sean/projects/github/open-data-portal/provisioning/roles/common/files/jetty dest=/etc/default/jetty
@@ -64,12 +62,19 @@
   - name: CKAN | Backup Solr schema
     command: mv /etc/solr/conf/schema.xml /etc/solr/conf/schema.xml.bak
 
+  # Update to use file module
   - name: CKAN | Replace Solr schema.xml with symlink to CKAN schema file
-    file: src=/usr/lib/ckan/default/src/ckan/ckan/config/solr/schema.xml dest=/etc/solr/conf/schema.xml
+    command: ln -s /usr/lib/ckan/default/src/ckan/ckan/config/solr/schema.xml /etc/solr/conf/schema.xml
 
   - name: CKAN | Restart Jetty Server
     service: name=jetty state=restarted
 
   - name: CKAN | Initialize CKAN database
-    sudo_user: postgres
     command: chdir=/etc/ckan/default /usr/lib/ckan/default/bin/paster --plugin=ckan db init
+
+  # Update to use file module
+  - name: CKAN | Link to who.ini
+    command: ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
+
+  - name: CKAN | Serve CKAN
+    command: /usr/lib/ckan/default/bin/paster serve /etc/ckan/default/development.ini
