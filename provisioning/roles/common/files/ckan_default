@@ -1,0 +1,18 @@
+<VirtualHost 0.0.0.0:8080>
+    ServerName opendata.chattlibrary.dev
+    ServerAlias www.opendata.chattlibrary.dev
+    WSGIScriptAlias / /etc/ckan/default/apache.wsgi
+
+    # Pass authorization info on (needed for rest api).
+    WSGIPassAuthorization On
+
+    # Deploy as a daemon (avoids conflicts between CKAN instances).
+    WSGIDaemonProcess ckan_default display-name=ckan_default processes=2 threads=15
+
+    WSGIProcessGroup ckan_default
+
+    ErrorLog /var/log/apache2/ckan_default.error.log
+    CustomLog /var/log/apache2/ckan_default.custom.log combined
+
+    WSGIRestrictStdout Off
+</VirtualHost>
