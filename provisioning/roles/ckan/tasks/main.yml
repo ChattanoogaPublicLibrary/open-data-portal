@@ -35,9 +35,8 @@
 - name: Backup Solr schema
   command: mv /etc/solr/conf/schema.xml /etc/solr/conf/schema.xml.bak
 
-# Update to use file module
 - name: Replace Solr schema.xml with symlink to CKAN schema file
-  command: ln -s /usr/lib/ckan/default/src/ckan/ckan/config/solr/schema.xml /etc/solr/conf/schema.xml
+  file: src=/usr/lib/ckan/default/src/ckan/ckan/config/solr/schema.xml dest=/etc/solr/conf/schema.xml state=link
 
 - name: Restart Jetty Server
   service: name=jetty state=restarted
@@ -45,9 +44,8 @@
 - name: Initialize CKAN database
   command: chdir=/etc/ckan/default /usr/lib/ckan/default/bin/paster --plugin=ckan db init
 
-# Update to use file module
 - name: Link to who.ini
-  command: ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
+  file: src=/usr/lib/ckan/default/src/ckan/who.ini dest=/etc/ckan/default/who.ini
 
 - name: Create production.ini
   command: cp /etc/ckan/default/development.ini /etc/ckan/default/production.ini 
@@ -65,10 +63,16 @@
   command: a2ensite ckan_default
 
 - name: Enable CKAN
-  command: ln -s /etc/nginx/sites-available/ckan_default /etc/nginx/sites-enabled/ckan_default
+  file: src=/etc/nginx/sites-available/ckan_default dest=/etc/nginx/sites-enabled/ckan_default state=link
 
 - name: Reload Apache2
   service: name=apache2 state=reloaded
 
 - name: Reload Nginx
   service: name=nginx state=reloaded
+
+- name: Update NameVirtualPort port
+  lineinfile: dest=/etc/apache2/ports.conf regexp='^NameVirtualHost' line='NameVirtualHost *:8080' backrefs=yes
+
+- name: Update Listen port
+  lineinfile: dest=/etc/apache2/ports.conf regexp='^Listen 80' line='Listen 8080' backrefs=yes
