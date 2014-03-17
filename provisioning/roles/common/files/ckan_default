@@ -13,6 +13,4 @@
 
     ErrorLog /var/log/apache2/ckan_default.error.log
     CustomLog /var/log/apache2/ckan_default.custom.log combined
-
-    WSGIRestrictStdout Off
 </VirtualHost>
