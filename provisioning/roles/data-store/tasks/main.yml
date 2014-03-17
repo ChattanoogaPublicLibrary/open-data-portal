@@ -1,0 +1,27 @@
+- name: Enable DataStore
+  lineinfile: dest=/etc/ckan/default/production.ini regexp='^ckan.plugins = stats text_preview recline_preview' line='ckan.plugins = stats text_preview recline_preview datastore' backrefs=yes
+
+- name: Create DB
+  sudo_user: postgres
+  postgresql_db: name=datastore_default
+               encoding='UTF-8'
+               lc_collate='en_US.UTF-8'
+               lc_ctype='en_US.UTF-8'
+               template='template0'
+               login_password=pass
+
+- name: Create Database User
+  sudo_user: postgres
+  postgresql_user: db=datastore_default user=datastore_default password=pass role_attr_flags=NOSUPERUSER,NOCREATEDB,NOCREATEROLE
+
+- name: Enable Datastore Write URL
+  lineinfile: dest=/etc/ckan/default/production.ini regexp='^#ckan.datastore.write_url' line='ckan.datastore.write_url = postgresql://ckan_default:pass@localhost/datastore_default' backrefs=yes
+
+- name: Enable Datastore Read URL
+  lineinfile: dest=/etc/ckan/default/production.ini regexp='^#ckan.datastore.read_url' line='ckan.datastore.read_url = postgresql://datastore_default:pass@localhost/datastore_default' backrefs=yes
+
+- name: Set DB Permissions
+  command: chdir=/etc/ckan/default /usr/lib/ckan/default/bin/paster --plugin=ckan datastore set-permissions postgres -c /etc/ckan/default/production.ini
+
+- name: Restart Apache
+  service: name=apache2 state=reloaded
