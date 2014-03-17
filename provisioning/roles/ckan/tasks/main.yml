@@ -1,3 +1,9 @@
+- name: Install CKAN source to virtualenv
+  pip: name='git+https://github.com/ckan/ckan.git@ckan-2.2#egg=ckan' virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
+
+- name: Install Python Requiements
+  pip: requirements=/usr/lib/ckan/default/src/ckan/requirements.txt virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
+
 - name: Start DB Cluster
   command: /etc/init.d/postgresql start
 
