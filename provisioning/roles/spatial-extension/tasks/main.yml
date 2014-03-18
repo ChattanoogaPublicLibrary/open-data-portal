@@ -1,0 +1,31 @@
+- name: Install PostGIS packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - postgresql-9.1-postgis
+    - libxml2-dev
+    - libxslt1-dev
+    - libgeos-c1
+
+- name: Create tables and functions
+  command: sudo -u postgres psql -d ckan_default -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
+
+- name: Create tables and functions
+  command: sudo -u postgres psql -d ckan_default -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql
+
+- name: Create tables and functions
+  command: sudo -u postgres psql -d ckan_default -c "ALTER TABLE spatial_ref_sys OWNER TO ckan_default"
+
+- name: Create tables and functions
+  command: sudo -u postgres psql -d ckan_default -c "ALTER TABLE geometry_columns OWNER TO ckan_default"
+
+- name: Install CKAN spatial extension to virtualenv
+  pip: name='git+https://github.com/okfn/ckanext-spatial.git@stable#egg=ckanext-spatial' virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
+
+- name: Install Python Requiements
+  pip: requirements=/usr/lib/ckan/default/src/ckanext-spatial/pip-requirements.txt virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
+
+- name: Enable Spatial extension in INI
+  lineinfile: dest=/etc/ckan/default/production.ini regexp='^ckan.plugins = stats text_preview recline_preview datastore' line='ckan.plugins = stats text_preview recline_preview datastore spatial_metadata spatial_query' backrefs=yes
+
+- name: Reload Apache
+  service: name=apache2 state=reloaded
