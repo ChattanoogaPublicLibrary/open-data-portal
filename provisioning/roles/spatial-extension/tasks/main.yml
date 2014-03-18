@@ -1,3 +1,4 @@
+---
 - name: Install PostGIS packages
   apt: pkg={{ item }} state=present
   with_items:

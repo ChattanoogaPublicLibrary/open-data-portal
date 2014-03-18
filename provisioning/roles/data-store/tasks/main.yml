@@ -1,3 +1,4 @@
+---
 - name: Enable DataStore
   lineinfile: dest=/etc/ckan/default/production.ini regexp='^ckan.plugins = stats text_preview recline_preview' line='ckan.plugins = stats text_preview recline_preview datastore' backrefs=yes
 
