@@ -1,10 +1,4 @@
 ---
-- name: General | Copy SSH Keypair
-  copy: src=/home/sean/.ssh/{{ item }} dest=/home/vagrant/.ssh/{{ item  }} owner=vagrant
-  with_items:
-    - id_rsa_vagrant
-    - id_rsa_vagrant.pub
-
 - name: General | Install Required Packages
   apt: pkg={{ item }} state=present update_cache=yes
   with_items:
