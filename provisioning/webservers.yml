@@ -5,3 +5,6 @@
   roles:
     - common
     - ckan
+    - file-store
+    - data-store
+    - spatial-extension
