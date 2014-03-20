@@ -28,7 +28,7 @@
   command: /usr/lib/ckan/default/bin/paster make-config ckan /etc/ckan/default/development.ini
 
 - name: Copy Jetty configuration to remote host
-  copy: src=/home/sean/projects/github/open-data-portal/provisioning/roles/common/files/jetty dest=/etc/default/jetty
+  copy: src=/roles/common/files/jetty dest=/etc/default/jetty
 
 - name: Start Jetty Server
   service: name=jetty state=started
@@ -54,13 +54,13 @@
   command: cp /etc/ckan/default/development.ini /etc/ckan/default/production.ini 
 
 - name: Copy Apache WSGI file
-  copy: src=/home/sean/projects/github/open-data-portal/provisioning/roles/common/files/apache.wsgi dest=/etc/ckan/default/apache.wsgi
+  copy: src=/roles/common/files/apache.wsgi dest=/etc/ckan/default/apache.wsgi
 
 - name: Copy Apache configuration file
-  copy: src=/home/sean/projects/github/open-data-portal/provisioning/roles/common/files/ckan_default dest=/etc/apache2/sites-available/ckan_default
+  copy: src=/roles/common/files/ckan_default dest=/etc/apache2/sites-available/ckan_default
 
 - name: Copy Nginx configuration file
-  copy: src=/home/sean/projects/github/open-data-portal/provisioning/roles/common/files/ckan_default_nginx dest=/etc/nginx/sites-available/ckan_default
+  copy: src=/roles/common/files/ckan_default_nginx dest=/etc/nginx/sites-available/ckan_default
 
 - name: Enable CKAN site
   command: a2ensite ckan_default
