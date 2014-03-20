@@ -1,5 +1,5 @@
 ---
-- name: General | Install Required Packages
+- name: Install Required Packages
   apt: pkg={{ item }} state=present update_cache=yes
   with_items:
     - apache2
