@@ -26,7 +26,29 @@
   pip: requirements=/usr/lib/ckan/default/src/ckanext-spatial/pip-requirements.txt virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
 
 - name: Enable Spatial extension in INI
-  lineinfile: dest=/etc/ckan/default/production.ini regexp='^ckan.plugins = stats text_preview recline_preview datastore' line='ckan.plugins = stats text_preview recline_preview datastore spatial_metadata spatial_query' backrefs=yes
+  lineinfile: dest=/etc/ckan/default/production.ini regexp='^ckan.plugins = stats text_preview recline_preview datastore' line='ckan.plugins = stats text_preview recline_preview datastore spatial_metadata spatial_query resource_proxy geojson_preview wms_preview' backrefs=yes
+
+- name: Enable Spatial Search with Solr Backend
+  lineinfile: dest=/etc/ckan/default/production.ini insertafter='^ckan.plugins' line='ckanext.spatial.search_backend = solr'
+
+# Use a template file instead?
+- name: Add Spatial Search to Solr Configuration (bbox_area)
+  lineinfile: dest=/etc/solr/conf/schema.xml insertbefore='</fields>' line='    <field name="bbox_area" type="float" indexed="true" stored="true" />'
+
+- name: Add Spatial Search to Solr Configuration (maxx)
+  lineinfile: dest=/etc/solr/conf/schema.xml insertbefore='^</fields>' line='    <field name="maxx" type="float" indexed="true" stored="true" />'
+
+- name: Add Spatial Search to Solr Configuration (maxy)
+  lineinfile: dest=/etc/solr/conf/schema.xml insertbefore='^</fields>' line='    <field name="maxy" type="float" indexed="true" stored="true" />'
+
+- name: Add Spatial Search to Solr Configuration (minx)
+  lineinfile: dest=/etc/solr/conf/schema.xml insertbefore='^</fields>' line='    <field name="minx" type="float" indexed="true" stored="true" />'
+
+- name: Add Spatial Search to Solr Configuration (miny)
+  lineinfile: dest=/etc/solr/conf/schema.xml insertbefore='^</fields>' line='    <field name="miny" type="float" indexed="true" stored="true" />'
+
+- name: Restart Jetty Server
+  service: name=jetty state=restarted
 
 - name: Reload Apache
   service: name=apache2 state=reloaded
