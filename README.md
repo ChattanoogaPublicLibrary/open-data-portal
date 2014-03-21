@@ -1,7 +1,7 @@
 Open Data Portal
 ================
 
-The Open Data Portal is a project of [Open Chattanooga](http://openchattanooga.com). Open Chattanooga is a collabortive effort of the City of Chattanooga, the [Chattanooga Public Library](http://chattlibrary.org) and the Open Chattanooga Brigade funded by the [Knight Foundation](http://www.knightfoundation.org) and the [Benwood Foundation](http://www.benwood.org).
+The Open Data Portal is a project of [Open Chattanooga](http://openchattanooga.com). Open Chattanooga is a collabortive effort of the [City of Chattanooga](http://www.chattanooga.gov), the [Chattanooga Public Library](http://chattlibrary.org) and the Open Chattanooga Brigade funded by the [Knight Foundation](http://www.knightfoundation.org) and the [Benwood Foundation](http://www.benwood.org).
 
 ## Instructions for Local Development
 
