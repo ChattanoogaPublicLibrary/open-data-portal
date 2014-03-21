@@ -1,12 +1,12 @@
 ---
-- name: Install CKAN source to virtualenv
-  pip: name='git+https://github.com/ckan/ckan.git@ckan-2.2#egg=ckan' virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
+# - name: Install CKAN source to virtualenv
+#   pip: name='git+https://github.com/ckan/ckan.git@ckan-2.2#egg=ckan' virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
 
-- name: Install Python Requiements
-  pip: requirements=/usr/lib/ckan/default/src/ckan/requirements.txt virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
+# - name: Install Python Requiements
+#   pip: requirements=/usr/lib/ckan/default/src/ckan/requirements.txt virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
 
-- name: Start DB Cluster
-  command: /etc/init.d/postgresql start
+# - name: Start DB Cluster
+#   command: /etc/init.d/postgresql start
 
 - name: Create DB
   sudo_user: postgres
@@ -24,11 +24,11 @@
 - name: Create site directory
   file: path=/etc/ckan/default state=directory owner=vagrant
 
-- name: Create CKAN config file
-  command: /usr/lib/ckan/default/bin/paster make-config ckan /etc/ckan/default/development.ini
+# - name: Create CKAN config file
+#   command: /usr/lib/ckan/default/bin/paster make-config ckan /etc/ckan/default/development.ini
 
 - name: Copy Jetty configuration to remote host
-  copy: src=/roles/common/files/jetty dest=/etc/default/jetty
+  copy: src=roles/common/files/jetty dest=/etc/default/jetty
 
 - name: Start Jetty Server
   service: name=jetty state=started
@@ -54,13 +54,13 @@
   command: cp /etc/ckan/default/development.ini /etc/ckan/default/production.ini 
 
 - name: Copy Apache WSGI file
-  copy: src=/roles/common/files/apache.wsgi dest=/etc/ckan/default/apache.wsgi
+  copy: src=roles/common/files/apache.wsgi dest=/etc/ckan/default/apache.wsgi
 
 - name: Copy Apache configuration file
-  copy: src=/roles/common/files/ckan_default dest=/etc/apache2/sites-available/ckan_default
+  copy: src=roles/common/files/ckan_default dest=/etc/apache2/sites-available/ckan_default
 
 - name: Copy Nginx configuration file
-  copy: src=/roles/common/files/ckan_default_nginx dest=/etc/nginx/sites-available/ckan_default
+  copy: src=roles/common/files/ckan_default_nginx dest=/etc/nginx/sites-available/ckan_default
 
 - name: Enable CKAN site
   command: a2ensite ckan_default
