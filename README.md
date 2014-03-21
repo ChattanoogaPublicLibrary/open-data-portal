@@ -8,7 +8,7 @@ The Open Data Portal is a project of Open Chattanooga. Open Chattanooga is a col
 To replicate the CPL's official development environment a number of open source tools are required, specifically: 
 
 * [Oracle VirtualBox](https://www.virtualbox.org/)
-* [Vagrant](http://www.vagrantup.com/)
+* [Vagrant](http://www.vagrantup.com/download-archive/v1.4.3.html) `v.1.4.3`
 * [Ansible](http://www.ansible.com/home)
 
 Furthermore this guide assumes you are developing on a *nix-based machine, as Windows is not fully supported by all the tools used here. With that important caveat noted, please don't let this be a deterent to those pioneers who want to dive in on a Windows machine!
