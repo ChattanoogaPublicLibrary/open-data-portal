@@ -1,15 +1,15 @@
 ---
-- name: Enable DataStore
-  lineinfile: dest=/etc/ckan/default/production.ini regexp='^ckan.plugins = stats text_preview recline_preview' line='ckan.plugins = stats text_preview recline_preview datastore' backrefs=yes
+- name: Enable DataStore and DataViewer Extensions
+  lineinfile: dest=/etc/ckan/default/production.ini regexp='^ckan.plugins =' line='ckan.plugins = stats text_preview recline_preview pdf_preview datastore' backrefs=yes
 
 - name: Create DB
   sudo_user: postgres
   postgresql_db: name=datastore_default
-               encoding='UTF-8'
-               lc_collate='en_US.UTF-8'
-               lc_ctype='en_US.UTF-8'
-               template='template0'
-               login_password=pass
+                 encoding='UTF-8'
+                 lc_collate='en_US.UTF-8'
+                 lc_ctype='en_US.UTF-8'
+                 template='template0'
+                 login_password=pass
 
 - name: Create Database User
   sudo_user: postgres
