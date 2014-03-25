@@ -3,7 +3,7 @@
   file: path=/var/lib/ckan/default state=directory owner=www-data mode=0700
 
 - name: Update CKAN config
-  lineinfile: dest=/etc/ckan/default/production.ini regexp='^#ckan.storage_path' line='ckan.storage_path = /var/lib/ckan/default' backrefs=yes
+  ini_file: dest=/etc/ckan/default/production.ini section=app:main option=ckan.storage_path value=/var/lib/ckan/default backup=yes
 
 - name: Reload Apache
   service: name=apache2 state=reloaded

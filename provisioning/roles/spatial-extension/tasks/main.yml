@@ -25,11 +25,11 @@
 - name: Install Python Requiements
   pip: requirements=/usr/lib/ckan/default/src/ckanext-spatial/pip-requirements.txt virtualenv=/usr/lib/ckan/default virtualenv_site_packages=no
 
-- name: Enable Spatial extension in INI
-  lineinfile: dest=/etc/ckan/default/production.ini regexp='^ckan.plugins = stats text_preview recline_preview datastore' line='ckan.plugins = stats text_preview recline_preview datastore spatial_metadata spatial_query resource_proxy geojson_preview wms_preview' backrefs=yes
+- name: Enable all extensions  
+  ini_file: dest=/etc/ckan/default/production.ini section=app:main option=ckan.plugins value="datastore geojson_preview pdf_preview recline_preview resource_proxy spatial_metadata spatial_query stats text_preview wms_preview" backup=yes
 
 - name: Enable Spatial Search with Solr Backend
-  lineinfile: dest=/etc/ckan/default/production.ini insertafter='^ckan.plugins' line='ckanext.spatial.search_backend = solr'
+  ini_file: dest=/etc/ckan/default/production.ini section=app:main option=ckanext.spatial.search_backend value=solr backup=yes
 
 # Use a template file instead?
 - name: Add Spatial Search to Solr Configuration (bbox_area)

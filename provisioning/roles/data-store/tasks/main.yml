@@ -1,7 +1,4 @@
 ---
-- name: Enable DataStore and DataViewer Extensions
-  lineinfile: dest=/etc/ckan/default/production.ini regexp='^ckan.plugins =' line='ckan.plugins = stats text_preview recline_preview pdf_preview datastore' backrefs=yes
-
 - name: Create DB
   sudo_user: postgres
   postgresql_db: name=datastore_default
@@ -16,10 +13,10 @@
   postgresql_user: db=datastore_default user=datastore_default password=pass role_attr_flags=NOSUPERUSER,NOCREATEDB,NOCREATEROLE
 
 - name: Enable Datastore Write URL
-  lineinfile: dest=/etc/ckan/default/production.ini regexp='^#ckan.datastore.write_url' line='ckan.datastore.write_url = postgresql://ckan_default:pass@localhost/datastore_default' backrefs=yes
+  ini_file: dest=/etc/ckan/default/production.ini section=app:main option=ckan.datastore.write_url value=postgresql://ckan_default:pass@localhost/datastore_default backup=yes
 
 - name: Enable Datastore Read URL
-  lineinfile: dest=/etc/ckan/default/production.ini regexp='^#ckan.datastore.read_url' line='ckan.datastore.read_url = postgresql://datastore_default:pass@localhost/datastore_default' backrefs=yes
+  ini_file: dest=/etc/ckan/default/production.ini section=app:main option=ckan.datastore.read_url value=postgresql://ckan_default:pass@localhost/datastore_default backup=yes
 
 - name: Set DB Permissions
   command: chdir=/etc/ckan/default /usr/lib/ckan/default/bin/paster --plugin=ckan datastore set-permissions postgres -c /etc/ckan/default/production.ini
