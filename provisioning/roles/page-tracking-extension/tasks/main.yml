@@ -1,0 +1,6 @@
+---
+- name: Enable Page View Tracking
+  ini_file: dest=/etc/ckan/default/production.ini section=app:main option=ckan.tracking_enabled value=true backup=yes
+
+- name: Add crontab job
+  cron: name="Page View Tracking" special_time="hourly" job="/usr/lib/ckan/bin/paster --plugin=ckan tracking update -c /etc/ckan/default/production.ini && /usr/lib/ckan/bin/paster --plugin=ckan search-index rebuild -r -c /etc/ckan/default/production.ini"
