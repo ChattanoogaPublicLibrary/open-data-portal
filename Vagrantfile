@@ -30,6 +30,7 @@ Vagrant.configure("2") do |config|
   # Provisioning
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "provisioning/site.yml"
+    ansible.inventory_path = "provisioning/stage"
     ansible.verbose = "v"
   end
 
