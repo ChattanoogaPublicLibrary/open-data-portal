@@ -1,0 +1,7 @@
+# http://docs.ckan.org/en/latest/maintaining/configuration.html
+
+- name: Set max file upload size
+  ini_file: dest=/etc/ckan/default/production.ini section=app:main option=ckan.max_resource_size value=1000
+
+- name: Set max image upload size
+  ini_file: dest=/etc/ckan/default/production.ini section=app:main option=ckan.max_image_size value=10
